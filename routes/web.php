@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Models\class_details;
 use App\Models\assignment_details;
+use App\Models\user_class_details;
 use Illuminate\Support\Facades\DB;
 /*
 |--------------------------------------------------------------------------
@@ -20,19 +21,39 @@ Route::get('/', function () {
 });
 Route::get('/teacher_home',function()
 {   
-    $clsses=class_details::all();
-    return view('teacher/view_class')->with('classes',$clsses);
+    $user_id=auth()->user()->id;
+    $clsses=class_details::all()->where('user_id',$user_id);
+    $clsses2=user_class_details::all()->where('user_id',$user_id);
+    $array;
+    $count=0;
+    foreach($clsses as $c)
+    {
+        $array[$count]=$c;
+        $count++;
+    }
+    foreach($clsses2 as $c)
+    {
+        $temp=class_details::all()->where('id',$c->class_code);
+        foreach($temp as $t)
+        {
+            $array[$count]=$t;
+            $count++;
+        }
+        
+    }
+    //dd($array);
+    return view('home/view_class')->with('classes',$array);
 });
 Route::get('/create_class',function()
 {
-    return view('teacher/create_class');
+    return view('home/create_class');
 });
 Route::post('/create_class',function()
 {
     $clss=new class_details;
     $clss->class_name=request('name');
     $clss->class_description=request('description');
-    $clss->user_id=1234;
+    $clss->user_id=auth()->user()->id;
     $clss->participants=1;
     $clss->save();
     return redirect('/teacher_home');
@@ -40,21 +61,58 @@ Route::post('/create_class',function()
 Route::get('/class_home/{slug}',function()
 {
     $id=request('slug');
-    return view('teacher/class_home')->with('id',$id);
+    $assigmets=assignment_Details::all()->where('id', $id);
+    $c = class_details::where(['id'=>$id])->get();
+    return view('home/class_home')->with('ass',$assigmets)->with('class',$c['0']);
 });
 Route::get('/create_assignment/{slug}',function()
 {
     $id=request('slug');
-    return view('teacher/create_assignment')->with('id',$id);
+    return view('home/create_assignment')->with('id',$id);
+});
+Route::get('/join_class',function()
+{
+    return view('home/joinClass');
+});
+Route::post('/join_class',function()
+{
+    $cls_code=request('code');
+    $user_id=auth()->user()->id;
+    $cls=class_details::where('id',$cls_code)->get();
+    //echo $cls;
+    if($cls!=null)
+    {
+        $alred=user_class_details::where('user_id',$user_id)->where('class_code',$cls_code)->get();
+        echo $alred;
+        if(isset($alred))
+        {
+            $clss=new user_class_details;
+            $clss->user_id=auth()->user()->id;
+            $clss->class_code=$cls_code;
+            $clss->save();   
+            
+        }
+        return redirect('teacher_home');
+    }
+    else{
+        return redirect('join_class');
+        
+    }
+    
 });
 Route::post('/create_assignment/{slug}',function()
 {
     $ass=new assignment_details;
     $file=request('assignment_file');
-    $file_name=$file->getClientOriginalName();
-    $file->move('upload_files',$file_name);
+    if($file!=null){
+        $file_name=$file->getClientOriginalName();
+        $file->move('upload_files',$file_name);
+        $ass->assignment_file=$file_name;
+    } 
     $ass->class_code=request('slug');
-    $ass->assignment_file=$file_name;
+    $ass->assignment_title = request('title');
+    $ass->assignment_description = request('description');
+    $ass->due_Date=request('due_Date');
     $ass->save();
     return redirect('/teacher_home');
 });
@@ -62,8 +120,14 @@ Route::get('/show_assignment/{slug}',function()
 {
     $code=request('slug');
     $assigmets=assignment_Details::all()->where('class_code', $code);
-    return view('teacher/show_assignment')->with('ass',$assigmets);
+    return view('home/show_assignment')->with('ass',$assigmets);
 });
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-    return view('dashboard');
+    return redirect('teacher_home');
 })->name('dashboard');
+Route::get('/logout',function()
+{
+    auth()->logout();
+    return redirect('/');
+}
+);

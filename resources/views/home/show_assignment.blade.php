@@ -38,8 +38,8 @@ block{
             padding-right: 50px;
             padding-bottom: 50px;
             margin-top: 50px;
-            width: 330px;
-            height: 200px;
+            width: 500px;
+            height: 20px;
         }
         .temp
         {
@@ -69,13 +69,23 @@ block{
     </style>
 <head><button onclick="location.href='create_class'" style="margin-left: 1250px; border-radius=15px;" ><i class="fa fa-plus-circle" >Create Class</i></button></head>
 <body >
-</div>
 <div class="temp">
-    @foreach($classes as $cls)
+
+    @foreach($ass as $a)
     <div class="classes">
-        <p style="border: 2px solid grey; border-radius:15px; height:250px;"><img src="{{ asset('class_bg.jfif')}}"><br>
-            Class Name:-<strong>{{$cls->class_name}}</strong></br>
-           Class Code:-<strong>{{$cls->class_code}}</strong><br><br><br><a href="class_home/{{$cls->class_code}}" style="margin-left: 100px;">Open</a></p></div>
+        <p style="border: 2px solid grey; border-radius:15px; height:80px;"><br>
+        @if(file($a->assignment_file)->isValid())
+            click here to download assignment_file<br>
+            hello
+             {{$a->assignment_file}}
+            <?php 
+            $file_name='upload_files/'.$a->assignment_file ?>
+            <a href="{{asset($file_name)}}" download>
+                click
+            </a>
+        @else
+         heloo
+        @endif
         @endforeach
     </div>
   </div>
