@@ -77,6 +77,12 @@ img{
 <img src="{{ asset('bg3.jfif')}}">
 <div class="top-left"><strong>{{$class->class_name}}</strong></div>
 </div>
+<div>
+  <form action="/invite/{{$class->id}}" method='post'>
+    @csrf
+    <input type="text" name="invite_email" placeholder="Enter User's Email address..." style="margin-left:500px;margin-top:15px;">
+    <input type="submit" value="invite" align="center">
+  </form> 
 <div class="temp">
  @if (!$ass->isEmpty())
     @foreach($ass as $a)

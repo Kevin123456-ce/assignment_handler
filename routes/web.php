@@ -41,7 +41,6 @@ Route::get('/teacher_home',function()
         }
         
     }
-    //dd($array);
     return view('home/view_class')->with('classes',$array);
 });
 Route::get('/create_class',function()
@@ -79,11 +78,9 @@ Route::post('/join_class',function()
     $cls_code=request('code');
     $user_id=auth()->user()->id;
     $cls=class_details::where('id',$cls_code)->get();
-    //echo $cls;
-    if($cls!=null)
+    if(isset($cls))
     {
         $alred=user_class_details::where('user_id',$user_id)->where('class_code',$cls_code)->get();
-        echo $alred;
         if(isset($alred))
         {
             $clss=new user_class_details;
@@ -127,7 +124,22 @@ Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
 })->name('dashboard');
 Route::get('/logout',function()
 {
+    session()->flush();
     auth()->logout();
     return redirect('/');
+}
+);
+// Route::get('sendbasicemail','MailController@basic_email');
+Route::post('/invite/{slug}',function()
+{
+    $emails=request('invite_email');
+    $data = array('code'=>request('slug'));
+    Mail::send('mail',$data,function($message) use ($emails){
+        $message->to($emails)->subject
+           ('You are invited to join the class ');
+        $message->from('bkevin6566@gmail.com','class Invitation');
+     });
+     echo "Basic Email Sent. Check your inbox.";
+     return ;
 }
 );
