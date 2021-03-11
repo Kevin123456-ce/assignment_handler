@@ -36,7 +36,7 @@ a:hover{
     margin-right: 35px;
 }
 .temp{
-    margin-top: 30px;
+    margin-top: 70px;
 }
 img{
   border-radius: 15px;
@@ -47,19 +47,56 @@ p{
     font-size: 18px;
     color:black;
 }
+body {
+  margin: 0;
+}
+
+.topnav {
+  overflow: hidden;
+  background-color: #333;
+  float: right;
+  margin-right: 25px;
+  margin-top: 25px;
+}
+
+.topnav a {
+  float: left;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.topnav a:hover {
+  background-color: #ddd;
+  color: black;
+}
+
+.topnav a.active {
+  background-color: #4CAF50;
+  color: white;
+}
 
     </style>
-<head><button onclick="location.href='create_class'" style="margin-left: 1250px; border-radius=15px;" ><i class="fa fa-plus-circle" >Create Class</i></button></head>
+<head></head>
 <body >
+<div class="topnav">
+  <a class="active" href="teacher_home">Home</a>
+  <a href="/create_class">Create Class</a>
+  <a href="/join_class">Join Class</a>
+  <a href="/logout">Log Out</a>
 </div>
+</br></br></br>
 <div class="temp">
-    @foreach($classes as $cls)
+  @if(isset($classes))
+    @foreach ($classes as $cls)
     <div class="classes">
-        <p style="border: 2px solid grey; border-radius:15px; height:250px;"><img src="{{ asset('bg3.jfif')}}"><br>
+        <p style="border: 2px solid grey; border-radius:15px; height:200px;"><img src="{{ asset('bg3.jfif')}}"><br>
             Class Name:-<strong>{{$cls->class_name}}</strong></br>
-                        {{$cls->class_description}}</br>
-           Class Code:-<strong>{{$cls->class_code}}</strong><br><a href="class_home/{{$cls->class_code}}">Open</a></p></div>
+           Class Code:-<strong>{{$cls->id }}</strong><br><a href="class_home/{{$cls->id}}">Open</a></p></div>
         @endforeach
+  @endif
   </div>
     </body>
 </html>

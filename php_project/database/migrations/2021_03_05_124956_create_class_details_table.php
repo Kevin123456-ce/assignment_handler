@@ -14,10 +14,11 @@ class CreateClassDetailsTable extends Migration
     public function up()
     {
         Schema::create('class_details', function (Blueprint $table) {
-            $table->Increments('class_code')->key();
+            $table->id();
             $table->string('class_name');
+            $table->bigInteger('user_id')->unsigned()->index();
             $table->text('class_description')->nullable();
-            $table->bigInteger('user_id');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->integer('participants')->nullable();
             $table->timestamps();
             // DB::statement("ALTER TABLE class_details AUTO_INCREMENT = 1234;");
