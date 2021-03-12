@@ -1,45 +1,36 @@
 <!DOCTYPE html>
-<html>
-<head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 body {
-  background-color: white;
+  font-family: Arial, Helvetica, sans-serif;
 }
 
 * {
   box-sizing: border-box;
 }
 
-
 .container {
-  margin:auto;
-  width:600px;
+  padding: 16px;
   background-color: white;
+  width:650px;
+  margin: auto;
 }
-
-
-input[type=text], input[type=password],textarea {
+input[type=text], input[type=password], textarea {
   width: 100%;
   padding: 15px;
   margin: 5px 0 22px 0;
   display: inline-block;
   border: none;
-  background:#f1f1f1;
+  background: #f1f1f1;
 }
 
 input[type=text]:focus, input[type=password]:focus {
   background-color: #ddd;
   outline: none;
 }
-
-
 hr {
   border: 1px solid #f1f1f1;
   margin-bottom: 25px;
 }
-
-
 .registerbtn {
   background-color: #4CAF50;
   color: white;
@@ -50,16 +41,7 @@ hr {
   width: 100%;
   opacity: 0.9;
 }
-.cancle{
-  background-color: #4CAF50;
-  color: white;
-  padding: 16px 20px;
-  margin-left: 545px;
-  border: none;
-  cursor: pointer;
-  opacity: 0.9;
-  width: 600px;
-}
+
 .registerbtn:hover {
   opacity: 1;
 }
@@ -67,31 +49,43 @@ hr {
 a {
   color: dodgerblue;
 }
+
 .signin {
   background-color: #f1f1f1;
   text-align: center;
+}
+.cancle{
+  background-color: #4CAF50;
+  color: white;
+  padding: 16px 20px;
+  margin-left: 535px;
+  border: none;
+  cursor: pointer;
+  opacity: 0.9;
+  width: 620px;
 }
 </style>
 </head>
 <body>
 
-<form action="/create_class" method="post">
-    @csrf
+<form action="/create_class" method="POST">
+@csrf
   <div class="container">
-    <h1 align="center">Create Class</h1>
+    <h1>Create Your Class</h1>
     <hr>
 
-    <label for="name"><b>Class Name</b></label>
-    <input type="text" placeholder="Enter Class Name.." name="name" id="name" required>
+    <label for="email"><b>Class Name</b></label>
+    <input type="text" placeholder="Enter Name"  name="name"  required>
 
-    <label for="description"><b>Class Description</b></label>
-    <textarea placeholder="Enter Class Description" name="description" placeholder="Enter Class Description"></textarea>
-    <hr>
+    <label for="psw"><b>Class Description</b></label>
+    <textarea placeholder="Enter Description" name="description" ></textarea>
 
-    <button type="submit" class="registerbtn">Create</button>
+
+    <button type="submit" class="registerbtn">Create</button></br>
+
   </div>
 
 </form>
-<button onclick="location.href='/teacher_home'"  class="cancle"><i class="fa fa-cancle" >Cancle</i></button>
+<button onclick="location.href='/home'" class="cancle"><i class="fa fa-cancle" >Cancle</i></button>
 </body>
 </html>

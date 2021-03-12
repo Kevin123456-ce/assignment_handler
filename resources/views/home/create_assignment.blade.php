@@ -5,7 +5,7 @@
 <style>
 body {
   font-family: Arial, Helvetica, sans-serif;
-  background-color:le;
+  background-color: white;
 }
 
 * {
@@ -55,7 +55,7 @@ hr {
   background-color: #4CAF50;
   color: white;
   padding: 16px 20px;
-  margin-left:545px;
+  margin-left: 535px;
   border: none;
   cursor: pointer;
   opacity: 0.9;
@@ -90,11 +90,11 @@ a {
     <label for="file"><b>Assignment File</b></label>
     <input type="file" name="assignment_file" />
     <label for="date"><b>Set Due date</b></label>
-    <input type="date" name="due_Date"/>
+    <input type="date" name="due_Date" />
     <button type="submit" class="registerbtn">Post</button>
   </div>
 
 </form>
-<button onclick="location.href='/teacher_home'"  class="cancle"><i class="fa fa-cancle" >Cancle</i></button>
+<button onclick="location.href='/home'"  class="cancle"><i class="fa fa-cancle" >Cancle</i></button>
 </body>
 </html>

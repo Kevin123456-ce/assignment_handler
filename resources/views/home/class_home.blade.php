@@ -4,6 +4,9 @@
 <head>
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 <style>
+.ass-link{
+  text-decoration: none;
+}
 img{
     width:700px;
     margin-top: 50px;
@@ -20,28 +23,27 @@ img{
 .top-left{
   position: absolute;
   top: 12px;
-  left: 500px;
+  left: 525px;
   font-size: 25px;
 }
 .assignments{
     margin-top: 30px;
     border: 1px solid;
-    border-radius: 15px;
-    margin-left: 25px;
-    margin-right: 525px;
+    border-radius: 5px;
+    margin-right: 500px;
+    padding: 12px;
 }
 .temp
 {
     margin-top: 5px;
     margin-left: 520px;
 }
-
 .topnav {
-    margin-top: 25px;
   overflow: hidden;
   background-color: #333;
   float: right;
   margin-right: 25px;
+  margin-top: 25px;
 }
 
 .topnav a {
@@ -50,7 +52,7 @@ img{
   text-align: center;
   padding: 14px 16px;
   text-decoration: none;
-  font-size: 15px;
+  font-size: 14px;
 }
 
 .topnav a:hover {
@@ -62,44 +64,32 @@ img{
   background-color: #4CAF50;
   color: white;
 }
-
 </style>
-
 </head>
 <body>
-  <div class="topnav">
-    <a class="active" href="/teacher_home">Home</a>
-    <a href="/create_assignment/{{$class->id}}">Create Assignment</a>
-    
-    <a href="/logout">Log Out</a>
-  </div><br><br>
+<div class="topnav">
+  <a class="active" href="teacher_home">Home</a>
+  <a href="/create_assignment/{{$class->id}}">Create Assignment</a>
+  <a href="/logout">Log Out</a>
+</div>
+</br></br></br>
+</br>
 <div class="container">
 <img src="{{ asset('bg3.jfif')}}">
 <div class="top-left"><strong>{{$class->class_name}}</strong></div>
 </div>
-<div>
-  <form action="/invite/{{$class->id}}" method='post'>
-    @csrf
-    <input type="text" name="invite_email" placeholder="Enter User's Email address..." style="margin-left:500px;margin-top:15px;">
-    <input type="submit" value="invite" align="center">
-  </form> 
+<form action="/invite/{{$class->id}}" method='post'>
+  @csrf
+  <input type="text" name="invite_email" placeholder="Enter User's Email address..." style="margin-top:15px; margin-left:535px;width: 300px;">
+  <input type="submit" value="invite" align="center">
+</form>
 <div class="temp">
  @if (!$ass->isEmpty())
     @foreach($ass as $a)
     <div class="assignments">
-        <strong><p style="font-size: 18px;"><i class="fas fa-star"></i> {{$a->assignment_title}}</strong></br></p>
-        <p style="padding-left: 15px;font-size: 15px;">@if (isset($a->assignment_description)) 
-        {{$a->assignment_description}}</br>
-        @endif</p>
+        <strong><p style="font-size: 15px;"><i class="fas fa-star" style="margin-right: 15px;"></i>{{$author->name}} has posted new Announcement: <a href='/assignment/{{$a->id}}' class="ass-link">{{$a->assignment_title}}</a></strong></br></p>
+        <p style="padding-left: 15px;">
         <p>
-        @if(isset($a->assignment_file))
-            click here to download assignment file<br>
-            <?php $file_name='upload_files/'.$a->assignment_file ?>
-            <a href="{{asset($file_name)}}" download>
-                click
-            </a>
-            </p>
-        @endif
     </div>
     @endforeach
 @else

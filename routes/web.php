@@ -3,8 +3,10 @@
 use Illuminate\Support\Facades\Route;
 use App\Models\class_details;
 use App\Models\assignment_details;
-use App\Models\user_class_details;
 use Illuminate\Support\Facades\DB;
+use App\Models\user_class_details;
+use App\Models\assignment_submission;
+use App\Models\User;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -19,29 +21,29 @@ use Illuminate\Support\Facades\DB;
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/teacher_home',function()
+Route::get('/home',function()
 {   
-    $user_id=auth()->user()->id;
-    $clsses=class_details::all()->where('user_id',$user_id);
-    $clsses2=user_class_details::all()->where('user_id',$user_id);
+    $create=class_details::all()->where('user_id',auth()->user()->id);
+    $join = user_class_details::all()->where('user_id',auth()->user()->id);
     $array;
     $count=0;
-    foreach($clsses as $c)
-    {
+    foreach($create as $c){
         $array[$count]=$c;
         $count++;
     }
-    foreach($clsses2 as $c)
+    foreach($join as $j)
     {
-        $temp=class_details::all()->where('id',$c->class_code);
-        foreach($temp as $t)
+        $cls = class_details::all()->where('id',$j->class_code);
+        foreach($cls as $t)
         {
             $array[$count]=$t;
             $count++;
         }
-        
     }
-    return view('home/view_class')->with('classes',$array);
+    if(isset($array))
+        return view('home/view_class')->with('classes',$array);
+    else
+        return view('home/view_class');
 });
 Route::get('/create_class',function()
 {
@@ -55,47 +57,22 @@ Route::post('/create_class',function()
     $clss->user_id=auth()->user()->id;
     $clss->participants=1;
     $clss->save();
-    return redirect('/teacher_home');
+    return redirect('/home');
 });
 Route::get('/class_home/{slug}',function()
 {
     $id=request('slug');
-    $assigmets=assignment_Details::all()->where('id', $id);
+    $author_id =  class_details::where(['id'=>$id])->get();
+    $author = User::where(['id'=>$author_id['0']->user_id])->get();
+    $assigmets=assignment_Details::all()->where('class_code', $id);
     $c = class_details::where(['id'=>$id])->get();
-    return view('home/class_home')->with('ass',$assigmets)->with('class',$c['0']);
+    return view('home/class_home')->with('ass',$assigmets)->with('class',$c['0'])->with('author',$author['0']);
+   # return view('teacher/class_home')->with('id',$id);
 });
 Route::get('/create_assignment/{slug}',function()
 {
     $id=request('slug');
     return view('home/create_assignment')->with('id',$id);
-});
-Route::get('/join_class',function()
-{
-    return view('home/joinClass');
-});
-Route::post('/join_class',function()
-{
-    $cls_code=request('code');
-    $user_id=auth()->user()->id;
-    $cls=class_details::where('id',$cls_code)->get();
-    if(isset($cls))
-    {
-        $alred=user_class_details::where('user_id',$user_id)->where('class_code',$cls_code)->get();
-        if(isset($alred))
-        {
-            $clss=new user_class_details;
-            $clss->user_id=auth()->user()->id;
-            $clss->class_code=$cls_code;
-            $clss->save();   
-            
-        }
-        return redirect('teacher_home');
-    }
-    else{
-        return redirect('join_class');
-        
-    }
-    
 });
 Route::post('/create_assignment/{slug}',function()
 {
@@ -106,22 +83,55 @@ Route::post('/create_assignment/{slug}',function()
         $file->move('upload_files',$file_name);
         $ass->assignment_file=$file_name;
     } 
+    $ass->due_Date = request('due_Date');
     $ass->class_code=request('slug');
     $ass->assignment_title = request('title');
     $ass->assignment_description = request('description');
-    $ass->due_Date=request('due_Date');
     $ass->save();
-    return redirect('/teacher_home');
+    return redirect('/home');
+});
+Route::get('/assignment/{slug}', function(){
+    $assignment = assignment_Details::where(['id'=>request('slug')])->get();
+    $alredysubmit = assignment_submission::where('class_code', $assignment['0']->class_code)->where('user_id',auth()->user()->id)->where('assignment_id',$assignment['0']->id)->get();
+    if(!sizeof($alredysubmit)) 
+        return view('home/show_assignment')->with('assignment',$assignment['0']);
+    return view('home/show_assignment')->with('assignment',$assignment['0'])->with('submission', $alredysubmit['0']);
 });
 Route::get('/show_assignment/{slug}',function()
 {
     $code=request('slug');
     $assigmets=assignment_Details::all()->where('class_code', $code);
-    return view('home/show_assignment')->with('ass',$assigmets);
+    return view('home/class_home')->with('ass',$assigmets);
+});
+Route::get('/join_class',function()
+{
+    return view('home/joinClass');
+});
+
+Route::post('/join_class',function(){
+    $cls_code=request('class_code');
+    $user_id=auth()->user()->id;
+    $cls=class_details::where('id',$cls_code)->where('user_id','!=',$user_id)->get();
+    if(isset($cls['0']))
+    {
+        $alred=user_class_details::where('user_id',$user_id)->where('class_code',$cls_code)->get();
+        if(!sizeof($alred))
+        {
+            $clss=new user_class_details;
+            $clss->user_id=auth()->user()->id;
+            $clss->class_code=$cls_code;
+            $clss->save();     
+        }
+        return redirect('/home');
+    }
+    else{
+        return redirect('/join_class')->withErrors(['Please Provide correct class code']);
+    }
 });
 Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
-    return redirect('teacher_home');
+    return redirect('/home');
 })->name('dashboard');
+
 Route::get('/logout',function()
 {
     session()->flush();
@@ -129,7 +139,6 @@ Route::get('/logout',function()
     return redirect('/');
 }
 );
-// Route::get('sendbasicemail','MailController@basic_email');
 Route::post('/invite/{slug}',function()
 {
     $emails=request('invite_email');
@@ -137,9 +146,25 @@ Route::post('/invite/{slug}',function()
     Mail::send('mail',$data,function($message) use ($emails){
         $message->to($emails)->subject
            ('You are invited to join the class ');
-        $message->from('bkevin6566@gmail.com','class Invitation');
+        $message->from('jaydevbambhaniya45@gmail.com','class Invitation');
      });
      echo "Basic Email Sent. Check your inbox.";
      return ;
 }
 );
+
+Route::post('/submit_assignment/{slug}', function(){
+    $ass = new assignment_submission;
+    $ass_details = assignment_Details::where(['id'=>request('slug')])->get();
+    $file=request('up_file');
+    if($file!=null){
+        $file_name=$file->getClientOriginalName();
+        $file->move('submission_files',$file_name);
+        $ass->assignment_file=$file_name;
+    } 
+    $ass->assignment_id = $ass_details['0']->id;
+    $ass->user_id = auth()->user()->id;
+    $ass->class_code = $ass_details['0']->class_code;
+    $ass->save();
+    return redirect('/home');
+});
