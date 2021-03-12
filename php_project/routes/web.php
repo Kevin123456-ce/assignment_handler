@@ -5,7 +5,8 @@ use App\Models\class_details;
 use App\Models\assignment_details;
 use Illuminate\Support\Facades\DB;
 use App\Models\user_class_details;
-
+use App\Models\assignment_submission;
+use App\Models\User;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -61,9 +62,11 @@ Route::post('/create_class',function()
 Route::get('/class_home/{slug}',function()
 {
     $id=request('slug');
+    $author_id =  class_details::where(['id'=>$id])->get();
+    $author = User::where(['id'=>$author_id['0']->user_id])->get();
     $assigmets=assignment_Details::all()->where('class_code', $id);
     $c = class_details::where(['id'=>$id])->get();
-    return view('home/class_home')->with('ass',$assigmets)->with('class',$c['0']);
+    return view('home/class_home')->with('ass',$assigmets)->with('class',$c['0'])->with('author',$author['0']);
    # return view('teacher/class_home')->with('id',$id);
 });
 Route::get('/create_assignment/{slug}',function()
@@ -86,6 +89,11 @@ Route::post('/create_assignment/{slug}',function()
     $ass->assignment_description = request('description');
     $ass->save();
     return redirect('/home');
+});
+Route::get('/assignment/{slug}', function(){
+    $assignment = assignment_Details::where(['id'=>request('slug')])->get();
+    $alredysubmit = assignment_submission::where('class_code', $assignment['0']->class_code)->where('user_id',auth()->user()->id)->get(); 
+    return view('home/show_assignment')->with('assignment',$assignment['0'])->with('submission', $alredysubmit['0']);
 });
 Route::get('/show_assignment/{slug}',function()
 {
@@ -142,3 +150,18 @@ Route::post('/invite/{slug}',function()
      return ;
 }
 );
+
+Route::post('/submit_assignment/{slug}', function(){
+    $ass = new assignment_submission;
+    $ass_details = assignment_Details::where(['id'=>request('slug')])->get();
+    $file=request('up_file');
+    if($file!=null){
+        $file_name=$file->getClientOriginalName();
+        $file->move('submission_files',$file_name);
+        $ass->assignment_file=$file_name;
+    } 
+    $ass->user_id = auth()->user()->id;
+    $ass->class_code = $ass_details['0']->class_code;
+    $ass->save();
+    return redirect('/home');
+});

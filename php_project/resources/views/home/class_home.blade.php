@@ -4,6 +4,9 @@
 <head>
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 <style>
+.ass-link{
+  text-decoration: none;
+}
 img{
     width:700px;
     margin-top: 50px;
@@ -26,8 +29,9 @@ img{
 .assignments{
     margin-top: 30px;
     border: 1px solid;
-    border-radius: 15px;
+    border-radius: 5px;
     margin-right: 500px;
+    padding: 12px;
 }
 .temp
 {
@@ -61,7 +65,6 @@ img{
   color: white;
 }
 </style>
-<button onclick="location.href='/create_assignment/{{$class->class_code}}'" style="margin-left: 1250px; border-radius=15px;" ><i class="fa fa-plus-circle" >Create Assignment</i></button>
 </head>
 <body>
 <div class="topnav">
@@ -84,19 +87,9 @@ img{
  @if (!$ass->isEmpty())
     @foreach($ass as $a)
     <div class="assignments">
-        <strong><p style="font-size: 15px;"><i class="fas fa-star"></i> {{$a->assignment_title}}</strong></br></p>
-        <p style="padding-left: 15px;">@if (isset($a->assignment_description)) 
-        {{$a->assignment_description}}</br>
-        @endif</p>
+        <strong><p style="font-size: 15px;"><i class="fas fa-star" style="margin-right: 15px;"></i>{{$author->name}} has posted new Announcement: <a href='/assignment/{{$a->id}}' class="ass-link">{{$a->assignment_title}}</a></strong></br></p>
+        <p style="padding-left: 15px;">
         <p>
-        @if(isset($a->assignment_file))
-            click here to download assignment file<br>
-            <?php $file_name='upload_files/'.$a->assignment_file ?>
-            <a href="{{asset($file_name)}}" download>
-                click
-            </a>
-            </p>
-        @endif
     </div>
     @endforeach
 @else

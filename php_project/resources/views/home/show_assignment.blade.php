@@ -1,93 +1,92 @@
 <!DOCTYPE html>
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 <html lang="en">
-<style>
-    a{
-      float: right;
-      color: #f2f2f2;
-      margin-right: 10px;
-    }
-    a:hover{
-      background-color: #ddd;
-      color: black
-    }
-    button{
-        border-radius: 15px;
-        border-color: black;
-    }
-    .nav{
-      color: black;
-      float: right;
-    }
-    body{
-            background-color:white;
-            background-image: url("{{ asset('bg1.jfif') }}");
-            background-repeat: no-repeat;
-            background-position: center;
-            background-size: cover;
-    }
-block{
-  background-color: lightgrey;
-  width: 300px;
-  border: 15px solid green;
-  padding: 50px;
-  margin: 20px;
-}
-        .classes{
-            display: inline-block;
-            padding-right: 50px;
-            padding-bottom: 50px;
-            margin-top: 50px;
-            width: 500px;
-            height: 20px;
-        }
-        .temp
-        {
-            margin-top: 5px;
-        }
-        img{
-            border-radius: 15px;
-            width: 328px;
-            height: 130px;
-            
-        }
+<head>
+    <style>
         a{
-           border: 1px;
-           text-decoration: none;
-           color: blue;
-           
+            text-decoration: none;
+            color: black;
         }
-        a:hover{
-            color: white;
-            background-color: black;
+        .classes{
+            float: left;
         }
-        p{
-            font-size: 18px;
-            color:black;
+        h2{
+            float: left;
         }
-
+        i{
+            margin-left: 20px;
+            margin-top: 25px;
+        }
+        .submit-block{
+            float: right;
+            border: 1px;
+            border-radius: 5px;
+            box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%);
+            margin-right: 350px;
+            margin-top: -50px;
+            padding: 20px;
+        }
+        .button {
+             border: none;
+             box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%);
+             color: orangered;
+             padding: 8px 15px;
+             text-align: center;
+             text-decoration: none;
+             display: inline-block;
+             font-size: 12px;
+             margin: 4px 2px;
+             cursor: pointer;
+        }
+.custom-file-input::-webkit-file-upload-button {
+  visibility: hidden;
+}
+.custom-file-input::before {
+  content: 'Add File';
+  display: inline-block;
+  background: linear-gradient(top, #f9f9f9, #e3e3e3);
+  border: 1px solid #999;
+  border-radius: 3px;
+  padding: 5px 8px;
+  outline: none;
+  white-space: nowrap;
+  -webkit-user-select: none;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 10pt;
+  color: orangered;
+}
+.custom-file-input:active::before {
+  background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
+}
     </style>
-<head><button onclick="location.href='create_class'" style="margin-left: 1250px; border-radius=15px;" ><i class="fa fa-plus-circle" >Create Class</i></button></head>
+</head>
 <body >
-<div class="temp">
-
-    @foreach($ass as $a)
+    <h1 style="color:peru;">{{$assignment->assignment_title}}</h1>
+    <p style="margin-left: 25px; font-size: 25px;">-{{$assignment->assignment_description}}</p>
+    <hr style="width: 700px; margin-left:0px;">
     <div class="classes">
-        <p style="border: 2px solid grey; border-radius:15px; height:80px;"><br>
-        @if(file($a->assignment_file)->isValid())
-            click here to download assignment_file<br>
-            hello
-             {{$a->assignment_file}}
+        @if(isset($assignment->assignment_file))
+             <h2>{{$assignment->assignment_file}}</h2>
             <?php 
-            $file_name='upload_files/'.$a->assignment_file ?>
+            $file_name='upload_files/'.$assignment->assignment_file ?>
             <a href="{{asset($file_name)}}" download>
-                click
+                <i class="fa fa-download" aria-hidden="true"></i>
             </a>
-        @else
-         heloo
         @endif
-        @endforeach
     </div>
-  </div>
+    <form action="/submit_assignment/{{$assignment->id}}" method="POST"  enctype="multipart/form-data">
+        @csrf
+    <div class="submit-block">
+        @if (!isset($submission->assignment_file))
+        <label for="file"></label>
+        <input type="file" name="up_file" class="custom-file-input"><br><br>
+        <label for="button"></label> 
+        <button type="submit" value="Submit" class="button">Submit</button>
+        @else
+          <label for="msg"><p>You have already submitted!!!</p></label>
+        @endif
+    </div>
+    </form>
     </body>
 </html>
