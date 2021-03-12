@@ -18,22 +18,44 @@
             body {
                 font-family: 'Nunito', sans-serif;
             }
+            button {
+                display: inline-block;
+                padding: 5px 15px;
+                font-size: 24px;
+                cursor: pointer;
+                text-align: center;
+                text-decoration: none;
+                outline: none;
+                color: #fff;
+                background-color: #4255ff;
+                border: none;
+                border-radius: 15px;
+                box-shadow: 0 5px #999;
+                }
+            .button:active {
+                background-color: #3e8e41;
+                box-shadow: 0 5px #666;
+                transform: translateY(4px);
+                }
         </style>
     </head>
-    <body class="antialiased">
-        <div class="relative flex items-top justify-center min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center sm:pt-0">
-             @if (Route::has('login'))
-                <div class="hidden fixed top-0 right-0 px-6 py-4 sm:block">
-                    @auth 
-                        <a href="{{ url('/dashboard') }}" class="text-sm text-gray-700 underline">Dashboard</a>
-                    @else
-                        <a href="{{ route('login') }}" class="text-sm text-gray-700 underline">Log in</a>
 
-                         @if (Route::has('register')) 
-                         <a href="{{ route('register') }}" class="ml-4 text-sm text-gray-700 underline">Register</a>
-                        @endif 
-                     @endauth
+    <body class="antialiased">
+    <img src="class1.jpg" align="center" width="100%" height="500"/>
+        <div class="relative flex items-top justify-center min-h-screen bg-gray-100 dark:bg-gray-900 sm:items-center sm:pt-0">
+            @if (Route::has('login'))
+                <div class="hidden fixed top-0 right-0 px-6 py-4 sm:block">
+                    @auth
+                        <button class="button" onclick="location.href='{{ url('/dashboard') }}'" class="text-sm text-gray-700 underline"><font color="white">Home</font></button>
+                    @else
+                    <button class="button" onclick="location.href='{{ route('login') }}'" class="text-sm text-gray-700 underline"><font color="white">Log in</font></button>
+
+                        @if (Route::has('register'))
+                        <button class="button" onclick="location.href='{{ route('register') }}'" class="ml-4 text-sm text-gray-700 underline"><font color="white">Register</font></a></button>
+                        @endif
+                    @endauth
                 </div>
-             @endif 
+            @endif
+        </div>
     </body>
 </html>

@@ -92,7 +92,9 @@ Route::post('/create_assignment/{slug}',function()
 });
 Route::get('/assignment/{slug}', function(){
     $assignment = assignment_Details::where(['id'=>request('slug')])->get();
-    $alredysubmit = assignment_submission::where('class_code', $assignment['0']->class_code)->where('user_id',auth()->user()->id)->get(); 
+    $alredysubmit = assignment_submission::where('class_code', $assignment['0']->class_code)->where('user_id',auth()->user()->id)->where('assignment_id',$assignment['0']->id)->get();
+    if(!sizeof($alredysubmit)) 
+        return view('home/show_assignment')->with('assignment',$assignment['0']);
     return view('home/show_assignment')->with('assignment',$assignment['0'])->with('submission', $alredysubmit['0']);
 });
 Route::get('/show_assignment/{slug}',function()
@@ -160,6 +162,7 @@ Route::post('/submit_assignment/{slug}', function(){
         $file->move('submission_files',$file_name);
         $ass->assignment_file=$file_name;
     } 
+    $ass->assignment_id = $ass_details['0']->id;
     $ass->user_id = auth()->user()->id;
     $ass->class_code = $ass_details['0']->class_code;
     $ass->save();

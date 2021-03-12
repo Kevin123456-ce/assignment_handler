@@ -19,6 +19,8 @@ class AssignmentSubmission extends Migration
             $table->foreign('class_code')->references('id')->on('class_details')->onDelete('cascade');
             $table->bigInteger('user_id')->unsigned()->index();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->bigInteger('assignment_id')->unsigned()->index();
+            $table->foreign('assignment_id')->references('id')->on('assignment_details')->onDelete('cascade');
             $table->string('assignment_file');
             $table->timestamps();
         });
