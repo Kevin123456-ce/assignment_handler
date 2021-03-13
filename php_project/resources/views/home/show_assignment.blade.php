@@ -22,7 +22,6 @@
             border: 1px;
             border-radius: 5px;
             box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%);
-            margin-right: 350px;
             margin-top: -50px;
             padding: 20px;
         }
@@ -59,6 +58,15 @@
 .custom-file-input:active::before {
   background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
 }
+table{
+    border-collapse: collapse;
+    border: 1px;
+    box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%);
+}
+th,td{
+    width: 200px;
+    text-align: center;
+}
     </style>
 </head>
 <body >
@@ -78,14 +86,25 @@
     <form action="/submit_assignment/{{$assignment->id}}" method="POST"  enctype="multipart/form-data">
         @csrf
     <div class="submit-block">
-        @if (!isset($submission->assignment_file))
+        @if(isset($submissions))
+        @for($i=0;$i<sizeof($submissions);$i++)
+        <table>
+        <tr><th>Name</th><th>Submitted At</th><th>Status</th></tr>
+        <div class="submissions">
+            <tr><td>{{$submissions[$i]->name}}</td><td>{{$sub_date[$i]->created_at}}</td><td>{{$status[$i]}}</td></tr>
+        </div>
+        @endfor
+        </table>
+        @else
+         @if (!isset($submission->assignment_file))
         <label for="file"></label>
         <input type="file" name="up_file" class="custom-file-input"><br><br>
         <label for="button"></label> 
         <button type="submit" value="Submit" class="button">Submit</button>
-        @else
+         @else
           <label for="msg"><p>You have already submitted!!!</p></label>
         @endif
+       @endif
     </div>
     </form>
     </body>
