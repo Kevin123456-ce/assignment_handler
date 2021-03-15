@@ -25,7 +25,7 @@ Route::get('/', function () {
 Route::get('/home',function()
 {   
     $create=class_details::all()->where('user_id',auth()->user()->id);
-    $join = user_class_details::all()->where('user_id',auth()->user()->id);
+    $join = user_class_details::all()->where('user_id',auth()->user()->id); //joined students
     $array;
     $count=0;
     foreach($create as $c){
@@ -93,11 +93,12 @@ Route::post('/create_assignment/{slug}',function()
 });
 Route::get('/assignment/{slug}', function(){
     $assignment = assignment_Details::where(['id'=>request('slug')])->get();
+    //echo $assignment;
     $author = class_details::where(['id'=>$assignment['0']->class_code, 'user_id'=>auth()->user()->id])->get();
     if(sizeof($author)){
         $submissions = assignment_submission::all()->where('class_code', $assignment['0']->class_code)->where('assignment_id',$assignment['0']->id);
         $array = [];
-        $status;
+        $status = [];
         $count=0;
         foreach($submissions as $sub)
         {
@@ -112,8 +113,8 @@ Route::get('/assignment/{slug}', function(){
                 }else{
                     $status[$count] = "Late Submission";                
                 }
+                $count++;
             }
-            $count++;
         }
         return view('home/show_assignment')->with('submissions',$array)->with('assignment',$assignment['0'])->with('status',$status)->with('sub_date',$submissions);
     }

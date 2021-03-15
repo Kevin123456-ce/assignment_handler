@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<?php use Carbon\Carbon;?>
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 <html lang="en">
 <head>
@@ -70,7 +71,7 @@ th,td{
     </style>
 </head>
 <body >
-    <h1 style="color:peru;">{{$assignment->assignment_title}}</h1>
+    <h1 style="color:peru;">{{$assignment->assignment_title}}</h1><p> Due: {{date('d-m-Y',strtotime($assignment->due_Date))}}</p>
     <p style="margin-left: 25px; font-size: 25px;">-{{$assignment->assignment_description}}</p>
     <hr style="width: 700px; margin-left:0px;">
     <div class="classes">
@@ -87,23 +88,27 @@ th,td{
         @csrf
     <div class="submit-block">
         @if(isset($submissions))
-        @for($i=0;$i<sizeof($submissions);$i++)
+        @php ($cnt=0)
+        @foreach($sub_date as $sub)
         <table>
         <tr><th>Name</th><th>Submitted At</th><th>Status</th></tr>
         <div class="submissions">
-            <tr><td>{{$submissions[$i]->name}}</td><td>{{$sub_date[$i]->created_at}}</td><td>{{$status[$i]}}</td></tr>
+            <tr><td>{{$submissions[$cnt]->name}}</td><td>{{$sub->created_at}}</td><td>{{$status[$cnt]}}</td></tr>
         </div>
-        @endfor
+        @php($cnt++)
+        @endforeach
         </table>
         @else
          @if (!isset($submission->assignment_file))
-        <label for="file"></label>
+        <label for="file"></label><label for="due">@php($current = Carbon::parse(date('Y-m-d',strtotime(Carbon::now()))))
+        @if($current->gt(Carbon::parse($assignment->due_date)))<p style="color: red">Missing</p>@endif</label>
         <input type="file" name="up_file" class="custom-file-input"><br><br>
         <label for="button"></label> 
         <button type="submit" value="Submit" class="button">Submit</button>
          @else
           <label for="msg"><p>You have already submitted!!!</p></label>
         @endif
+      
        @endif
     </div>
     </form>

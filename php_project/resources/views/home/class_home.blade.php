@@ -92,7 +92,7 @@ img{
 <form action="/invite/{{$class->id}}" method='post'>
   @csrf
   <input type="text" name="invite_email" placeholder="Enter User's Email address..." style="margin-top:15px; width: 300px;">
-  <input type="submit" value="invite" align="center">
+  <input type="submit" value="Invite" align="center">
 </form>
 @endif
 <div class="temp">
