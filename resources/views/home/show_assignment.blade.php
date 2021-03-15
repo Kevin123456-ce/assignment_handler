@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<?php use Carbon\Carbon;?>
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 <html lang="en">
 <head>
@@ -22,7 +23,6 @@
             border: 1px;
             border-radius: 5px;
             box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%);
-            margin-right: 350px;
             margin-top: -50px;
             padding: 20px;
         }
@@ -59,10 +59,19 @@
 .custom-file-input:active::before {
   background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9);
 }
+table{
+    border-collapse: collapse;
+    border: 1px;
+    box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%);
+}
+th,td{
+    width: 200px;
+    text-align: center;
+}
     </style>
 </head>
 <body >
-    <h1 style="color:peru;">{{$assignment->assignment_title}}</h1>
+    <h1 style="color:peru;">{{$assignment->assignment_title}}</h1><p> Due: {{date('d-m-Y',strtotime($assignment->due_Date))}}</p>
     <p style="margin-left: 25px; font-size: 25px;">-{{$assignment->assignment_description}}</p>
     <hr style="width: 700px; margin-left:0px;">
     <div class="classes">
@@ -78,14 +87,28 @@
     <form action="/submit_assignment/{{$assignment->id}}" method="POST"  enctype="multipart/form-data">
         @csrf
     <div class="submit-block">
-        @if (!isset($submission->assignment_file))
-        <label for="file"></label>
+        @if(isset($submissions))
+        @php ($cnt=0)
+        @foreach($sub_date as $sub)
+        <table>
+        <tr><th>Name</th><th>Submitted At</th><th>Status</th></tr>
+        <div class="submissions">
+            <tr><td>{{$submissions[$cnt]->name}}</td><td>{{$sub->created_at}}</td><td>{{$status[$cnt]}}</td></tr>
+        </div>
+        @php($cnt++)
+        @endforeach
+        </table>
+        @else
+         @if (!isset($submission->assignment_file))
+        <label for="file"></label><label for="due">@php($current = Carbon::parse(date('Y-m-d',strtotime(Carbon::now()))))
+        @if($current->gt($assignment->due_date))<p style="color: red">Missing</p>@endif</label>
         <input type="file" name="up_file" class="custom-file-input"><br><br>
         <label for="button"></label> 
         <button type="submit" value="Submit" class="button">Submit</button>
-        @else
+         @else
           <label for="msg"><p>You have already submitted!!!</p></label>
         @endif
+       @endif
     </div>
     </form>
     </body>

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\user_class_details;
 use App\Models\assignment_submission;
 use App\Models\User;
+use Carbon\Carbon;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -24,7 +25,7 @@ Route::get('/', function () {
 Route::get('/home',function()
 {   
     $create=class_details::all()->where('user_id',auth()->user()->id);
-    $join = user_class_details::all()->where('user_id',auth()->user()->id);
+    $join = user_class_details::all()->where('user_id',auth()->user()->id); //joined students
     $array;
     $count=0;
     foreach($create as $c){
@@ -92,6 +93,31 @@ Route::post('/create_assignment/{slug}',function()
 });
 Route::get('/assignment/{slug}', function(){
     $assignment = assignment_Details::where(['id'=>request('slug')])->get();
+    //echo $assignment;
+    $author = class_details::where(['id'=>$assignment['0']->class_code, 'user_id'=>auth()->user()->id])->get();
+    if(sizeof($author)){
+        $submissions = assignment_submission::all()->where('class_code', $assignment['0']->class_code)->where('assignment_id',$assignment['0']->id);
+        $array = [];
+        $status = [];
+        $count=0;
+        foreach($submissions as $sub)
+        {
+            $usr = User::where(['id'=>$sub->user_id])->first();
+            if($usr!=null){
+                $array[$count] = $usr;
+                $sub_date = Carbon::parse(date('Y-m-d',strtotime($sub->created_at)));
+                $due_date = $assignment['0']->due_date;
+                if($sub_date->lte($due_date))
+                {
+                    $status[$count] = "On Time";
+                }else{
+                    $status[$count] = "Late Submission";                
+                }
+                $count++;
+            }
+        }
+        return view('home/show_assignment')->with('submissions',$array)->with('assignment',$assignment['0'])->with('status',$status)->with('sub_date',$submissions);
+    }
     $alredysubmit = assignment_submission::where('class_code', $assignment['0']->class_code)->where('user_id',auth()->user()->id)->where('assignment_id',$assignment['0']->id)->get();
     if(!sizeof($alredysubmit)) 
         return view('home/show_assignment')->with('assignment',$assignment['0']);
@@ -166,5 +192,32 @@ Route::post('/submit_assignment/{slug}', function(){
     $ass->user_id = auth()->user()->id;
     $ass->class_code = $ass_details['0']->class_code;
     $ass->save();
+    return redirect('/home');
+});
+
+Route::get('/people/{slug}', function(){
+    $class = class_details::where(['id'=>request('slug')])->get();
+    $author = User::where(['id'=>$class['0']->user_id])->get();
+    $u = user_class_details::all()->where('class_code',request('slug'));
+    $users = [];
+    $count=0;
+    foreach($u as $user)
+    {
+        $us = User::where(['id'=>$user->user_id])->get();
+        echo "\n";
+        $users[$count] = $us['0'];
+        $count++;
+    }
+    return view('home/people')->with('author',$author['0'])->with('users',$users);
+});
+Route::get('/unenroll/{slug}',function()
+{
+    $author = User::where(['id'=>auth()->user()->id]);
+    if(isset($author))
+    {
+        DB::delete('delete from class_details where id = ?',[request('slug')]);
+        return redirect('/home');
+    }
+    DB::delete('delete from user_class_details where user_id=? and class_code=?',[auth()->user()->id, request('slug')]);
     return redirect('/home');
 });

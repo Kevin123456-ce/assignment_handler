@@ -23,7 +23,7 @@ img{
 .top-left{
   position: absolute;
   top: 12px;
-  left: 525px;
+  left: 500px;
   font-size: 25px;
 }
 .assignments{
@@ -64,25 +64,38 @@ img{
   background-color: #4CAF50;
   color: white;
 }
+.people{
+  text-decoration: none;
+  box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%);
+  padding: 15px;
+  border-radius: 5px;
+  color: green;
+}
 </style>
 </head>
 <body>
 <div class="topnav">
-  <a class="active" href="teacher_home">Home</a>
+  <a class="active" href="/home">Home</a>
+  @if ($author->id == auth()->user()->id)
   <a href="/create_assignment/{{$class->id}}">Create Assignment</a>
-  <a href="/logout">Log Out</a>
+  @endif
+  <a href="/unenroll/{{$class->id}}">Unenroll</a>
+  <a href="logout">Log Out</a>
 </div>
 </br></br></br>
 </br>
+<a href="/people/{{$class->id}}" style="margin-left: 790px;" class="people">People</a>
 <div class="container">
 <img src="{{ asset('bg3.jfif')}}">
 <div class="top-left"><strong>{{$class->class_name}}</strong></div>
 </div>
+@if ($author->id == auth()->user()->id)
 <form action="/invite/{{$class->id}}" method='post'>
   @csrf
-  <input type="text" name="invite_email" placeholder="Enter User's Email address..." style="margin-top:15px; margin-left:535px;width: 300px;">
+  <input type="text" name="invite_email" placeholder="Enter User's Email address..." style="margin-top:15px; margin-left:525px; width: 300px;">
   <input type="submit" value="invite" align="center">
 </form>
+@endif
 <div class="temp">
  @if (!$ass->isEmpty())
     @foreach($ass as $a)

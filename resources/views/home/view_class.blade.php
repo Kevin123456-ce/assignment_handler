@@ -85,6 +85,9 @@ body {
   <a class="active" href="teacher_home">Home</a>
   <a href="/create_class">Create Class</a>
   <a href="/join_class">Join Class</a>
+  <x-jet-dropdown-link href="{{ route('profile.show') }}">
+    {{ __('Profile') }}
+</x-jet-dropdown-link>
   <a href="/logout">Log Out</a>
 </div>
 </br></br></br>

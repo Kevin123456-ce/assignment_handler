@@ -58,7 +58,7 @@ a {
   background-color: #4CAF50;
   color: white;
   padding: 16px 20px;
-  margin-left: 450px;
+  margin-left: 535px;
   border: none;
   cursor: pointer;
   opacity: 0.9;
@@ -85,6 +85,6 @@ a {
   </div>
 
 </form>
-<button onclick="location.href='/teacher_home'" class="cancle"><i class="fa fa-cancle" >Cancle</i></button>
+<button onclick="location.href='/home'" class="cancle"><i class="fa fa-cancle" >Cancle</i></button>
 </body>
 </html>
