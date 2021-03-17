@@ -80,7 +80,7 @@ img{
   <a href="/create_assignment/{{$class->id}}">Create Assignment</a>
   @endif
   <a href="/unenroll/{{$class->id}}">Unenroll</a>
-  <a href="logout">Log Out</a>
+  <a href="/logout">Log Out</a>
 </div>
 </br></br></br>
 </br>

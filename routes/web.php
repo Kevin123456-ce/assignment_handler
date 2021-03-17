@@ -89,6 +89,18 @@ Route::post('/create_assignment/{slug}',function()
     $ass->assignment_title = request('title');
     $ass->assignment_description = request('description');
     $ass->save();
+	$users = user_class_details::all()->where('class_code',request('slug'));
+    $author =  User::where(['id'=>auth()->user()->id])->first();
+    foreach($users as $user){
+        $u = User::where(['id'=>$user->user_id])->first();
+        $email = $u->email;
+        $data = array('code'=>request('slug'),'content'=>'Your Teacher Post New Assignment');
+        Mail::send('mail',$data,function($message) use ($email){
+            $message->to($email)->subject
+               ('New Assignment ');
+            $message->from('bkevin6566@gmail.com','New Assignment');
+         });
+	}
     return redirect('/home');
 });
 Route::get('/assignment/{slug}', function(){
@@ -168,14 +180,14 @@ Route::get('/logout',function()
 Route::post('/invite/{slug}',function()
 {
     $emails=request('invite_email');
-    $data = array('code'=>request('slug'));
+    $data = array('code'=>request('slug'),'content'=>'Your Teacher Invite You To Join This Class');
     Mail::send('mail',$data,function($message) use ($emails){
         $message->to($emails)->subject
            ('You are invited to join the class ');
         $message->from('jaydevbambhaniya45@gmail.com','class Invitation');
      });
-     echo "Basic Email Sent. Check your inbox.";
-     return ;
+
+     return redirect('/home') ;
 }
 );
 
@@ -212,12 +224,8 @@ Route::get('/people/{slug}', function(){
 });
 Route::get('/unenroll/{slug}',function()
 {
-    $author = User::where(['id'=>auth()->user()->id]);
-    if(isset($author))
-    {
-        DB::delete('delete from class_details where id = ?',[request('slug')]);
-        return redirect('/home');
-    }
-    DB::delete('delete from user_class_details where user_id=? and class_code=?',[auth()->user()->id, request('slug')]);
+    $author = auth()->user()->id;
+	DB::delete('delete from class_details where user_id=? and id=?',[$author, request('slug')]);
+    DB::delete('delete from user_class_details where user_id=? and class_code=?',[$author, request('slug')]);
     return redirect('/home');
 });
