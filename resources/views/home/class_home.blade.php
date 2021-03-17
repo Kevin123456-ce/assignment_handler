@@ -1,3 +1,9 @@
+<?php 
+  if(Session::get('msg'))
+  {
+    echo '<script>alert("'.Session::get('msg').'")</script>';
+    Session::forget('msg');
+  }?>
 <!DOCTYPE html>
 <html>
 <title>Class Page</title>
@@ -92,7 +98,7 @@ img{
 @if ($author->id == auth()->user()->id)
 <form action="/invite/{{$class->id}}" method='post'>
   @csrf
-  <input type="text" name="invite_email" placeholder="Enter User's Email address..." style="margin-top:15px; margin-left:525px; width: 300px;">
+  <input type="text" name="invite_email" placeholder="Enter User's Email address..." style="margin-top:15px; margin-left:500px; width: 620px;">
   <input type="submit" value="invite" align="center">
 </form>
 @endif

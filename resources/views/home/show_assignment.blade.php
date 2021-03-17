@@ -107,12 +107,13 @@ th,td{
          @if (!isset($submission->assignment_file))
 			<div class="submit-block">
         <label for="file"></label><label for="due">@php($current = Carbon::now('Asia/Kolkata'))
-        @if($current->gt($assignment->due_date))<p style="color: red">Missing</p>@endif</label>
+        @if($current->gt($assignment->due_Date))<p style="color: red">Missing</p>@endif</label>
         <input type="file" name="up_file" class="custom-file-input"><br><br>
         <label for="button"></label> 
         <button type="submit" value="Submit" class="button">Submit</button><div>
          @else
 			<div class="submit-block">
+                
           <label for="msg"><p>You have already submitted!!!</p></label></div>
         @endif
        @endif

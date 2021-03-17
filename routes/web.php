@@ -8,6 +8,7 @@ use App\Models\user_class_details;
 use App\Models\assignment_submission;
 use App\Models\User;
 use Carbon\Carbon;
+$message='';
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -89,12 +90,14 @@ Route::post('/create_assignment/{slug}',function()
     $ass->assignment_title = request('title');
     $ass->assignment_description = request('description');
     $ass->save();
+    $cls=class_details::all()->where('id',request('slug'))->first();
+    
 	$users = user_class_details::all()->where('class_code',request('slug'));
-    $author =  User::where(['id'=>auth()->user()->id])->first();
     foreach($users as $user){
         $u = User::where(['id'=>$user->user_id])->first();
         $email = $u->email;
-        $data = array('code'=>request('slug'),'content'=>'Your Teacher Post New Assignment');
+        $content='Your Teacher Has Posted New Assignment in '.$cls->class_name;
+        $data = array('content'=>$content);
         Mail::send('mail',$data,function($message) use ($email){
             $message->to($email)->subject
                ('New Assignment ');
@@ -118,7 +121,7 @@ Route::get('/assignment/{slug}', function(){
             if($usr!=null){
                 $array[$count] = $usr;
                 $sub_date = Carbon::parse(date('Y-m-d',strtotime($sub->created_at)));
-                $due_date = $assignment['0']->due_date;
+                $due_date = $assignment['0']->due_Date;
                 if($sub_date->lte($due_date))
                 {
                     $status[$count] = "On Time";
@@ -180,14 +183,16 @@ Route::get('/logout',function()
 Route::post('/invite/{slug}',function()
 {
     $emails=request('invite_email');
-    $data = array('code'=>request('slug'),'content'=>'Your Teacher Invite You To Join This Class');
+    $data = array('content'=>'Your Teacher Invite You To Join Class with class code:-'.request('slug') );
     Mail::send('mail',$data,function($message) use ($emails){
         $message->to($emails)->subject
            ('You are invited to join the class ');
-        $message->from('jaydevbambhaniya45@gmail.com','class Invitation');
+        $message->from('bkevin6566@gmail.com','class Invitation');
      });
-
-     return redirect('/home') ;
+     $message="Successfully Invited!!!";
+     Session::put('msg',$message);
+     $id=request('slug');
+     return redirect('/class_home/'.$id);
 }
 );
 
