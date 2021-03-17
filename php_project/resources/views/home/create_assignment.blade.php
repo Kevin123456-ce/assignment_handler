@@ -90,7 +90,7 @@ a {
     <label for="file"><b>Assignment File</b></label>
     <input type="file" name="assignment_file" />
     <label for="date"><b>Set Due date</b></label>
-    <input type="date" name="due_Date" />
+    <input type="datetime-local" name="due_Date" />
     <button type="submit" class="registerbtn">Post</button>
   </div>
 

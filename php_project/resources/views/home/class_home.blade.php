@@ -1,3 +1,9 @@
+<?php 
+if(Session::get('msg')){  
+      echo '<script>alert("'.Session::get('msg').'")</script>'; 
+      Session::forget('msg');
+}
+?> 
 <!DOCTYPE html>
 <html>
 <title>Class Page</title>
@@ -75,15 +81,16 @@ img{
 </head>
 <body>
 <div class="topnav">
-  <a class="active" href="teacher_home">Home</a>
+  <a class="active" href="/home">Home</a>
   @if ($author->id == auth()->user()->id)
   <a href="/create_assignment/{{$class->id}}">Create Assignment</a>
   @endif
-  <a href="logout">Log Out</a>
+  <a href="/unenroll/{{$class->id}}">Unenroll</a>
+  <a href="/logout">Log Out</a>
 </div>
 </br></br></br>
 </br>
-<a href="/people/{{$class->id}}" style="margin-left: 700px;" class="people">People</a>
+<a href="/people/{{$class->id}}" style="margin-left: 730px;" class="people">People</a>
 <div class="container">
 <img src="{{ asset('bg3.jfif')}}">
 <div class="top-left"><strong>{{$class->class_name}}</strong></div>
@@ -91,8 +98,8 @@ img{
 @if ($author->id == auth()->user()->id)
 <form action="/invite/{{$class->id}}" method='post'>
   @csrf
-  <input type="text" name="invite_email" placeholder="Enter User's Email address..." style="margin-top:15px; width: 300px;">
-  <input type="submit" value="Invite" align="center">
+  <input type="text" name="invite_email" placeholder="Enter User's Email address..." style="margin-top:15px; margin-left:415px; width: 620px;">
+  <input type="submit" class="fa fa user-plus" value="Invite" align="center">
 </form>
 @endif
 <div class="temp">

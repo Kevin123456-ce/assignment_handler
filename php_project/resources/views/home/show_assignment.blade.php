@@ -20,6 +20,7 @@
         }
         .submit-block{
             float: right;
+			margin-right:300px;
             border: 1px;
             border-radius: 5px;
             box-shadow: 0 1px 2px 0 rgb(60 64 67 / 30%), 0 2px 6px 2px rgb(60 64 67 / 15%);
@@ -86,31 +87,37 @@ th,td{
     </div>
     <form action="/submit_assignment/{{$assignment->id}}" method="POST"  enctype="multipart/form-data">
         @csrf
-    <div class="submit-block">
+		
         @if(isset($submissions))
         @php ($cnt=0)
+		@if(sizeof($submissions))
         @foreach($sub_date as $sub)
-        <table>
-        <tr><th>Name</th><th>Submitted At</th><th>Status</th></tr>
-        <div class="submissions">
-            <tr><td>{{$submissions[$cnt]->name}}</td><td>{{$sub->created_at}}</td><td>{{$status[$cnt]}}</td></tr>
-        </div>
-        @php($cnt++)
+			<div class="submit-block">
+			<table>
+			<tr><th>Name</th><th>Submitted At</th><th>Status</th></tr>
+			<div class="submissions">
+				<tr><td>{{$submissions[$cnt]->name}}</td><td>{{$sub->created_at->timezone('Asia/Kolkata')}}</td><td>{{$status[$cnt]}}</td></tr>
+			</div>
+			@php($cnt++)
         @endforeach
+		@endif
+		</div>
         </table>
         @else
          @if (!isset($submission->assignment_file))
-        <label for="file"></label><label for="due">@php($current = Carbon::parse(date('Y-m-d',strtotime(Carbon::now()))))
-        @if($current->gt(Carbon::parse($assignment->due_date)))<p style="color: red">Missing</p>@endif</label>
+			<div class="submit-block">
+        <label for="file"></label><label for="due">@php($current = Carbon::now('Asia/Kolkata'))
+            {{$current}}
+        @if($current->gt(date($assignment->due_Date)))<p style="color: red">Missing</p>@endif</label>
         <input type="file" name="up_file" class="custom-file-input"><br><br>
         <label for="button"></label> 
-        <button type="submit" value="Submit" class="button">Submit</button>
+        <button type="submit" value="Submit" class="button">Submit</button><div>
          @else
-          <label for="msg"><p>You have already submitted!!!</p></label>
+			<div class="submit-block">
+          <label for="msg"><p>You have already submitted!!!</p></label></div>
         @endif
-      
        @endif
-    </div>
+ 
     </form>
     </body>
 </html>

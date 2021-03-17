@@ -1,3 +1,12 @@
+<?php 
+// PHP program to pop an alert 
+// message box on the screen 
+  
+// Display the alert box
+if(isset($message)){  
+echo '<script>alert("Welcome to Geeks for Geeks")</script>'; 
+}
+?>
 <!DOCTYPE html>
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 <html lang="en">
@@ -85,6 +94,9 @@ body {
   <a class="active" href="teacher_home">Home</a>
   <a href="/create_class">Create Class</a>
   <a href="/join_class">Join Class</a>
+  <x-jet-dropdown-link href="{{ route('profile.show') }}">
+    {{ __('Profile') }}
+</x-jet-dropdown-link>
   <a href="/logout">Log Out</a>
 </div>
 </br></br></br>

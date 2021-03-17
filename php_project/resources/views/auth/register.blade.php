@@ -1,8 +1,9 @@
+<img src="{{ asset('class3.jpg')}}" align="left" width="500" height="500"/>
 <x-guest-layout>
     <x-jet-authentication-card>
         <x-slot name="logo">
-            <x-jet-authentication-card-logo />
-        </x-slot>
+            <h1><font color="blue" size=25><b>Registration</b></font></h1>
+            </x-slot>
 
         <x-jet-validation-errors class="mb-4" />
 

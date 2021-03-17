@@ -18,7 +18,6 @@ use Carbon\Carbon;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
 Route::get('/', function () {
     return view('welcome');
 });
@@ -89,6 +88,20 @@ Route::post('/create_assignment/{slug}',function()
     $ass->assignment_title = request('title');
     $ass->assignment_description = request('description');
     $ass->save();
+    $cls=class_details::all()->where('id',request('slug'))->first();
+    
+	$users = user_class_details::all()->where('class_code',request('slug'));
+    foreach($users as $user){
+        $u = User::where(['id'=>$user->user_id])->first();
+        $email = $u->email;
+        $content='Your Teacher Has Posted New Assignment in '.$cls->class_name;
+        $data = array('content'=>$content);
+        Mail::send('mail',$data,function($message) use ($email){
+            $message->to($email)->subject
+               ('New Assignment ');
+            $message->from('jaydevbambhaniya45@gmail.com','New Assignment');
+         });
+	}
     return redirect('/home');
 });
 Route::get('/assignment/{slug}', function(){
@@ -105,8 +118,8 @@ Route::get('/assignment/{slug}', function(){
             $usr = User::where(['id'=>$sub->user_id])->first();
             if($usr!=null){
                 $array[$count] = $usr;
-                $sub_date = Carbon::parse(date('Y-m-d',strtotime($sub->created_at)));
-                $due_date = Carbon::parse($assignment['0']->due_date);
+                $sub_date = Carbon::parse($sub->created_at->timezone('Asia/Kolkata'));
+                $due_date = $assignment['0']->due_Date;
                 if($sub_date->lte($due_date))
                 {
                     $status[$count] = "On Time";
@@ -168,14 +181,17 @@ Route::get('/logout',function()
 Route::post('/invite/{slug}',function()
 {
     $emails=request('invite_email');
-    $data = array('code'=>request('slug'));
+    $data = array('content'=>'Your Teacher Invite You To Join Class with class code:-'.request('slug'));
     Mail::send('mail',$data,function($message) use ($emails){
         $message->to($emails)->subject
            ('You are invited to join the class ');
-        $message->from('jaydevbambhaniya45@gmail.com','class Invitation');
-     });
-     echo "Basic Email Sent. Check your inbox.";
-     return ;
+        $message->from('jaydevbambhaniya45@gmail.com','Class Invitation');
+    });
+    $message= "Invited";
+    
+    //echo '<script>alert("Welcome to Geeks for Geeks")</script>'; 
+    Session::put('msg',"Successfully Invited!!!");
+    return redirect('/class_home/'.request("slug"));
 }
 );
 
@@ -209,4 +225,10 @@ Route::get('/people/{slug}', function(){
         $count++;
     }
     return view('home/people')->with('author',$author['0'])->with('users',$users);
+});
+Route::get('/unenroll/{slug}', function(){
+    $author = auth()->user()->id;
+	DB::delete('delete from class_details where user_id=? and id=?',[$author, request('slug')]);
+    DB::delete('delete from user_class_details where user_id=? and class_code=?',[$author, request('slug')]);
+    return redirect('/home');
 });

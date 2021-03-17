@@ -86,6 +86,6 @@ a {
   </div>
 
 </form>
-<button onclick="location.href='/teacher_home'" class="cancle"><i class="fa fa-cancle" >Cancle</i></button>
+<button onclick="location.href='/home'" class="cancle"><i class="fa fa-cancle" >Cancle</i></button>
 </body>
 </html>
