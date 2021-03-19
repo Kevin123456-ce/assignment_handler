@@ -1,7 +1,8 @@
+<img src="{{ asset('forget.jpeg')}}" align="left" width="500" height="500"/>
 <x-guest-layout>
     <x-jet-authentication-card>
         <x-slot name="logo">
-            <x-jet-authentication-card-logo />
+            <h1 style="color: blue; font-size: 50px;">Forgot Password</h1>
         </x-slot>
 
         <div class="mb-4 text-sm text-gray-600">

@@ -74,7 +74,7 @@ th,td{
 <body >
     <h1 style="color:peru;">{{$assignment->assignment_title}}</h1><p> Due: {{date('d-m-Y',strtotime($assignment->due_Date))}}</p>
     <p style="margin-left: 25px; font-size: 25px;">-{{$assignment->assignment_description}}</p>
-    <hr style="width: 700px; margin-left:0px;">
+    <hr style="width: 350px; margin-left:0px;">
     <div class="classes">
         @if(isset($assignment->assignment_file))
              <h2>{{$assignment->assignment_file}}</h2>
@@ -94,9 +94,14 @@ th,td{
         @foreach($sub_date as $sub)
 			<div class="submit-block">
 			<table>
-			<tr><th>Name</th><th>Submitted At</th><th>Status</th></tr>
+			<tr><th>Name</th><th>Submitted At</th><th>Status</th><th>File</th></tr>
 			<div class="submissions">
-				<tr><td>{{$submissions[$cnt]->name}}</td><td>{{$sub->created_at->timezone('Asia/Kolkata')}}</td><td>{{$status[$cnt]}}</td></tr>
+				<tr><td>{{$submissions[$cnt]->name}}</td><td>{{$sub->created_at->timezone('Asia/Kolkata')}}</td><td>{{$status[$cnt]}}</td>
+                    <td><?php 
+                        $file_name='upload_files/'.$sub->assignment_file ?>
+                        <a href="{{asset($file_name)}}" download style="color:red;">{{$sub->assignment_file}}
+                        </a>
+                    </td></tr>
 			</div>
 			@php($cnt++)
         @endforeach
@@ -107,7 +112,7 @@ th,td{
          @if (!isset($submission->assignment_file))
 			<div class="submit-block">
         <label for="file"></label><label for="due">@php($current = Carbon::now('Asia/Kolkata'))
-            {{$current}}
+            {{-- {{$current}} --}}
         @if($current->gt(date($assignment->due_Date)))<p style="color: red">Missing</p>@endif</label>
         <input type="file" name="up_file" class="custom-file-input"><br><br>
         <label for="button"></label> 
